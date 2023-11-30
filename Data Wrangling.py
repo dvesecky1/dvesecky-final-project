@@ -7,11 +7,8 @@ Created on Fri Nov 24 14:58:00 2023
 
 import os
 import pandas as pd
-import pandas_datareader.data as web
 from pandas_datareader import wb
 import datetime
-import matplotlib.pyplot as plt
-
 
 BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 
@@ -50,25 +47,4 @@ def merge_all(pei, acled, df_wb):
     df=df_pei_acled.merge(df_wb, how='left', on='Country')
     return df
 df_merged=merge_all(pei, acled, df_wb)
-
-#Creating some plots with the merged data
-def violence_by_election_type_plot(df):
-    fig, ax=plt.subplots()
-    order = ['Very Low', 'Low', 'Moderate', 'High', 'Very High']
-    df.PEItype = df.PEItype.astype("category")
-    df.PEItype = df.PEItype.cat.set_categories(order)
-    df=df.sort_values(['PEItype'])
-    plt.scatter(df['PEItype'], df['ACLED Index'])
-    ax.set_title("Conflict Index Position by Electoral Integrity Category")
-    ax.set_xlabel("Degree of Election Integrity")
-    ax.set_ylabel("Conflict Index")
-violence_by_election_type_plot(df_merged)
-
-def gdp_per_captia_by_population_plot(df):
-    fig, ax=plt.subplots()
-    plt.yscale('log')
-    plt.scatter(df['GDP per Capita'], df['Total Population'])
-    ax.set_title("Per Capita GDP by Total Population")
-    ax.set_xlabel("GDP per Capita")
-    ax.set_ylabel("Total Population")
-gdp_per_captia_by_population_plot(df_merged)
+df_merged.to_csv(os.path.join(BASE_PATH, 'merged.csv'))
