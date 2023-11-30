@@ -3,10 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from shiny import App, render, ui, reactive
 
-BASE_PATH=r'c:\Users\dv987\Documents\GitHub\homework-4-dvesecky1-1'
+BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 
 #Terminal commands for launching shiny
-#cd documents\GitHub\homework-4-dvesecky1-1
+#cd documents\GitHub\dvesecky-final-project
 #shiny run --reload my_app/app.py
 
 def load_merged(path):
@@ -28,7 +28,7 @@ def acled_index_by_wb_statistic(df, stat):
     fig, ax=plt.subplots()
     if stat=='Total Population':
         plt.yscale('log')
-    plt.scatter(df['ACLEDIndexi'], df[stat])
+    plt.scatter(df['ACLED Index'], df[stat])
     ax.set_title("ACLED Index by " + stat)
     ax.set_xlabel("ACLED Index")
     ax.set_ylabel(stat)
@@ -46,20 +46,26 @@ app_ui = ui.page_fluid(
                      offset=2,
                      align='center')),
     #Dropdown choices for World Bank statistics
-    ui.row(ui.column(4, ui.input_select(id='wb_statistic',
+    ui.row(ui.column(4, ui.input_select(id='wb_statistic_pei',
                                         label='Please pick a statistic',
                                         choices=['GDP per Capita', 'Total Population']),
                                                  offset=4,
                                                  align='center')),
     ui.output_plot('pei_plot'),
-    ui.output_plot('acled_plot')
+    ui.row(ui.column(4, ui.input_select(id='wb_statistic_acled',
+                                        label='Please pick a statistic',
+                                        choices=['GDP per Capita', 'Total Population']),
+                                                 offset=4,
+                                                 align='center')),
+    ui.output_plot('acled_plot'),
     )
 
 def server(input, output, session):
     @output
     @render.plot
     def pei_plot():
-        return pei_index_by_wb_statistic(df_merged, input.wb_statistic())
+        return pei_index_by_wb_statistic(df_merged, input.wb_statistic_pei())
+    @render.plot
     def acled_plot():
-        return acled_index_by_wb_statistic(df_merged, input.wb_statistic())
+        return acled_index_by_wb_statistic(df_merged, input.wb_statistic_acled())
 app = App(app_ui, server)
