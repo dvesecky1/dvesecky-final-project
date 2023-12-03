@@ -9,6 +9,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from shiny import App, render, ui, reactive
+import seaborn as sns
 
 BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 
@@ -22,20 +23,11 @@ def load_merged(path):
 df_merged=load_merged('merged.csv')
 
 #Functions for plotting with shiny
-def pei_index_by_wb_statistic(df, stat):
+def acled_index_by_wb_statistic(df, stat, size):
     fig, ax=plt.subplots()
     if stat=='Total Population':
         plt.yscale('log')
-    plt.scatter(df['PEIIndexi'], df[stat])
-    ax.set_title("PEI Index by " + stat)
-    ax.set_xlabel("PEI Index")
-    ax.set_ylabel(stat)
-
-def acled_index_by_wb_statistic(df, stat):
-    fig, ax=plt.subplots()
-    if stat=='Total Population':
-        plt.yscale('log')
-    plt.scatter(df['ACLED Index'], df[stat])
+    plt.scatter(df['ACLED Index'], df[stat], s=size)
     ax.set_title("ACLED Index by " + stat)
     ax.set_xlabel("ACLED Index")
     ax.set_ylabel(stat)
@@ -43,36 +35,51 @@ def acled_index_by_wb_statistic(df, stat):
 #Generating a shiny page with some plots
 app_ui = ui.page_fluid(
     #Text with relevant information
-     ui.row(ui.column(12, ui.h1('Final Project'),
-                     ui.hr(),
-                     align='center')),
+    ui.panel_title('Final Project'),
     ui.row(ui.column(4, ui.em(ui.h3("Danny Vesecky")),
                      offset=1,
                      align='center'),
            ui.column(4, ui.h3('PPHA 30538 Autumn 2023'),
                      offset=2,
                      align='center')),
+    ui.layout_sidebar(
+        ui.sidebar(
+            #Sliders for point and text size
+            ui.input_slider("cex", "Point Size", min=0, max=100, value=50, step=5),
+            ui.input_slider("cexaxis", "Axis Text Size", min=0, max=2, value=1, step=0.25), 
+        ),
     #Dropdown choices for World Bank statistics
-    ui.row(ui.column(4, ui.input_select(id='wb_statistic_pei',
+        ui.row(ui.column(4, ui.input_select(id='wb_statistic_pei',
                                         label='Please pick a statistic',
                                         choices=['GDP per Capita', 'Total Population']),
                                                  offset=4,
                                                  align='center')),
-    ui.output_plot('pei_plot'),
-    ui.row(ui.column(4, ui.input_select(id='wb_statistic_acled',
+        ui.output_plot('pei_plot'),
+        ui.row(ui.column(4, ui.input_select(id='wb_statistic_acled',
                                         label='Please pick a statistic',
                                         choices=['GDP per Capita', 'Total Population']),
                                                  offset=4,
                                                  align='center')),
-    ui.output_plot('acled_plot'),
-    )
+        ui.output_plot('acled_plot'),
+    ),
+)
 
 def server(input, output, session):
     @output
     @render.plot
     def pei_plot():
-        return pei_index_by_wb_statistic(df_merged, input.wb_statistic_pei())
+        p = sns.scatterplot(data = df_merged,
+                            x = "PEIIndexi",
+                            y = input.wb_statistic_pei(),
+                            s = float(input.cex()))
+        sns.set(font_scale=input.cexaxis())
+        return(p)
     @render.plot
     def acled_plot():
-        return acled_index_by_wb_statistic(df_merged, input.wb_statistic_acled())
+        p = sns.scatterplot(data = df_merged,
+                            x = "ACLED Index",
+                            y = input.wb_statistic_acled(),
+                            s = float(input.cex()))
+        sns.set(font_scale=input.cexaxis())
+        return(p)
 app = App(app_ui, server)
