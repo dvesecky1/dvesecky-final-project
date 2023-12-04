@@ -14,7 +14,7 @@ BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 def load_merged(path):
     df=pd.read_csv(os.path.join(BASE_PATH, path))
     return df
-df_merged=load_merged('merged.csv')
+df_merged=load_merged('Data\merged.csv')
 
 #Creating some plots with the merged data
 def violence_by_election_type_plot(df):

@@ -20,7 +20,7 @@ BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 def load_merged(path):
     df=pd.read_csv(os.path.join(BASE_PATH, path))
     return df
-df_merged=load_merged('merged.csv')
+df_merged=load_merged('Data\merged.csv')
 
 #Functions for plotting with shiny
 def acled_index_by_wb_statistic(df, stat, size):

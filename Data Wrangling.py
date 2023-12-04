@@ -18,7 +18,7 @@ def load_pei(path):
     df=df[['country', 'PEIIndexp', 'PEIIndexi', 'PEItype']].dropna(how='all')
     df=df.rename(columns={'country':'Country'})
     return df
-pei=load_pei('dataverse_files\PEI country-level data (PEI_9.0).csv')
+pei=load_pei('Data\dataverse_files\PEI country-level data (PEI_9.0).csv')
 
 #Loading the PEI data
 def load_acled(path):
@@ -26,7 +26,7 @@ def load_acled(path):
     df=df[['Country', 'Index Ranking']].dropna(how='all')
     df=df.rename(columns={'Index Ranking':'ACLED Index'})
     return df
-acled=load_acled('July-2023-Index-Rankings.xlsx')
+acled=load_acled('Data\July-2023-Index-Rankings.xlsx')
 
 #Loading the World Bank Data
 def load_wb():
