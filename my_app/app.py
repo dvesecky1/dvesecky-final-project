@@ -6,10 +6,9 @@ Created on Thu Nov 30 14:56:31 2023
 """
 
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 from shiny import App, render, ui, reactive
 import seaborn as sns
+import pandas as pd
 
 BASE_PATH=r'c:\Users\dv987\Documents\GitHub\dvesecky-final-project'
 
@@ -21,16 +20,6 @@ def load_merged(path):
     df=pd.read_csv(os.path.join(BASE_PATH, path))
     return df
 df_merged=load_merged('Data\merged.csv')
-
-#Functions for plotting with shiny
-def acled_index_by_wb_statistic(df, stat, size):
-    fig, ax=plt.subplots()
-    if stat=='Total Population':
-        plt.yscale('log')
-    plt.scatter(df['ACLED Index'], df[stat], s=size)
-    ax.set_title("ACLED Index by " + stat)
-    ax.set_xlabel("ACLED Index")
-    ax.set_ylabel(stat)
 
 #Generating a shiny page with some plots
 app_ui = ui.page_fluid(
@@ -69,7 +58,7 @@ def server(input, output, session):
     @render.plot
     def pei_plot():
         p = sns.scatterplot(data = df_merged,
-                            x = "PEIIndexi",
+                            x = "PEIIndexp",
                             y = input.wb_statistic_pei(),
                             s = float(input.cex()))
         sns.set(font_scale=input.cexaxis())
